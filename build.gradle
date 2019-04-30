@@ -1,0 +1,44 @@
+plugins {
+    id 'java'
+    id "biz.aQute.bnd.builder" version "4.1.0"
+    id 'org.jayware.osgi-ds' version '0.5.5'
+}
+
+group 'OSGiLoaderPlugin'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'osgi'
+apply plugin: 'osgi-ds'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven {url 'https://jitpack.io'}
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation 'com.github.GostShell:sdk:v0.0.3.6-alpha'
+}
+
+jar {
+    manifest {
+        attributes(
+                '-sources': 'true',
+                'Export-Package':'com.flocondria.greet',
+                'Import-Package': 'org.osgi.framework;com.evergarden.sdk.database;com.flocondria.greet',
+                'Automatic-Module-Name': "OSGiLP",
+                'Bundle-Name': "OSGiLP",
+                'Bundle-SymbolicName': "OSGiLP",
+                'Bundle-Activator': 'com.evergarden.osgi.loader.Loader',
+                'Bundle-Version':'1.0',
+                'Built-By': System.getProperty("user.name"),
+                'Built-On': new Date().format('yyyy-MM-dd'),
+                'Service-Component': 'OSGI-INF/*.xml',
+        )
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
